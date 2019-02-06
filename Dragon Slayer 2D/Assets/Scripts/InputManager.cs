@@ -31,10 +31,31 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        horizontalMovement = Input.GetAxisRaw("Horizontal");
-        verticalMovement = Input.GetAxisRaw("Vertical");
-        jumpButtonDown = Input.GetButtonDown("Jump");
-        attackButtonDown = Input.GetButtonDown("Fire1");
+        bool[] controllerConnect = new bool[2];
+
+        foreach(string name in Input.GetJoystickNames())
+        {
+            if(name.Contains("Xbox One"))
+            {
+                controllerConnect[0] = true;
+            }
+        }
+
+
+        //Xbox one controller conntected
+        if (controllerConnect[0])
+        {
+            horizontalMovement = Input.GetAxisRaw("LeftJoyStickHorizontal");
+            verticalMovement = Input.GetAxisRaw("LeftJoyStickVertical");
+            jumpButtonDown = Input.GetButtonDown("AButton");
+            attackButtonDown = Input.GetButtonDown("BButton");
+        } else
+        {
+            horizontalMovement = Input.GetAxisRaw("Horizontal");
+            verticalMovement = Input.GetAxisRaw("Vertical");
+            jumpButtonDown = Input.GetButtonDown("Jump");
+            attackButtonDown = Input.GetButtonDown("Fire1");
+        }
     }
 
 }

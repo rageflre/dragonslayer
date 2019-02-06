@@ -65,14 +65,14 @@ public class GameManager : MonoBehaviour
 
     public void IncreaseHealth()
     {
+        healthSprites[currentHealth].enabled = true;
         currentHealth++;
-        healthSprites[currentHealth - 1].enabled = true;
     }
 
     public void DecreaseHealth()
     {
-        healthSprites[currentHealth - 1].enabled = false;
         currentHealth--;
+        healthSprites[currentHealth].enabled = false;
         invincibleTime = Time.time + 1;
         if(currentHealth <= 0)
         {
