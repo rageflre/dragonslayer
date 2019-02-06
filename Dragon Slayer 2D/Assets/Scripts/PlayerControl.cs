@@ -1,19 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
 {
+    public Transform groundCheck;
     public float speed, jumpForce, groundCheckRadius;
+    public bool isAttacking = false;
+
     Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
-    Direction direction;
     Animator animator;
     InputManager inputManager;
-    public Transform groundCheck;
 
     float attackTimer;
-    public bool isAttacking = false;
     bool isGrounded;
 
     private void Awake()
@@ -22,8 +23,6 @@ public class PlayerControl : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        direction = GetComponent<Direction>();
 
         animator = GetComponent<Animator>();
 
@@ -41,28 +40,17 @@ public class PlayerControl : MonoBehaviour
 
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Grabs on what side you entered the collision
-        direction.hitDirection = direction.getDirection(collision);
+        if(collision.tag.Equals("Health") && GameManager.instance.currentHealth < 3)
+        {
+            GameManager.instance.IncreaseHealth();
+            collision.gameObject.SetActive(false);
+        }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //Sets on what side you entered the collision
-        direction.hitDirection = direction.getDirection(collision);
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        //Sets on what side you entered the collision
-        direction.hitDirection = direction.getDirection(collision);
-    }
-    
     void HandleMovement()
     {
-        bool hitLeftWall = direction.hitDirection.Equals(Direction.HitDirection.LEFT);
-        bool hitRightWall = direction.hitDirection.Equals(Direction.HitDirection.RIGHT);
 
         rb.velocity = new Vector2(inputManager.horizontalMovement * speed, rb.velocity.y);
 
