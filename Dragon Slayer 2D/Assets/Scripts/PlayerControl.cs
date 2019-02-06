@@ -5,17 +5,19 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     public float speed, jumpForce, groundCheckRadius;
-    float horizontalMovement;
-    States state;
     Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
     Direction direction;
     Animator animator;
+    InputManager inputManager;
     public Transform groundCheck;
+
+    float attackTimer;
+    public bool isAttacking = false;
+    bool isGrounded;
 
     private void Awake()
     {
-        state = GetComponent<States>();
 
         rb = GetComponent<Rigidbody2D>();
 
@@ -25,17 +27,17 @@ public class PlayerControl : MonoBehaviour
 
         animator = GetComponent<Animator>();
 
-        state.SetState(States.State.IDLE);
+        inputManager = GetComponent<InputManager>();
     }
 
     private void Update()
     {
 
-        //print("state: " + state.GetState().ToString() + ", hitDirection: " + direction.hitDirection.ToString());
-
         HandleMovement();
 
         HandleJumping();
+
+        HandleAttacking();
 
     }
 
@@ -56,56 +58,50 @@ public class PlayerControl : MonoBehaviour
         //Sets on what side you entered the collision
         direction.hitDirection = direction.getDirection(collision);
     }
-
+    
     void HandleMovement()
     {
         bool hitLeftWall = direction.hitDirection.Equals(Direction.HitDirection.LEFT);
         bool hitRightWall = direction.hitDirection.Equals(Direction.HitDirection.RIGHT);
 
-        horizontalMovement = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(inputManager.horizontalMovement * speed, rb.velocity.y);
 
-        if ((hitLeftWall && horizontalMovement < -0.01f || hitRightWall && horizontalMovement > 0.01f) && state.GetState().Equals(States.State.JUMPING))
-            return;
-
-        rb.velocity = new Vector2(horizontalMovement * speed, rb.velocity.y);
-
-        if (!state.GetState().Equals(States.State.JUMPING))
+        if (isGrounded)
         {
-            //TODO: Set speed for animator
-            animator.SetFloat("speed", Mathf.Abs(horizontalMovement));
-            state.SetState(States.State.WALKING);
+            animator.SetFloat("speed", Mathf.Abs(inputManager.horizontalMovement));
         }
 
-        if (horizontalMovement > 0.01f && spriteRenderer.flipX || horizontalMovement < -0.01f && !spriteRenderer.flipX)
+        if (inputManager.horizontalMovement > 0.01f && spriteRenderer.flipX || inputManager.horizontalMovement < -0.01f && !spriteRenderer.flipX)
         {
             spriteRenderer.flipX = !spriteRenderer.flipX;
-        }
-
-        if (state.GetState().Equals(States.State.WALKING) && horizontalMovement == 0)
-        {
-            state.SetState(States.State.IDLE);
         }
     }
 
     void HandleJumping()
     {
-        bool isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (inputManager.jumpButtonDown && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce);
         }
 
-        if(!isGrounded)
-        {
-            //TODO: Set jumping for animator
+        animator.SetBool("jumping", isGrounded ? false : true);
+    }
 
-            state.SetState(States.State.JUMPING);
-        } else
+    void HandleAttacking()
+    {
+        if (inputManager.attackButtonDown && !isAttacking) //Input.GetKeyDown(KeyCode.RightShift)
         {
-            state.SetState(horizontalMovement != 0 ? States.State.WALKING : States.State.IDLE);
+            isAttacking = true;
+            attackTimer = Time.time + 0.325f;
         }
 
+        if(Time.time > attackTimer)
+        {
+            isAttacking = false;
+        }
+        animator.SetBool("attacking", isAttacking);
     }
 
 }
