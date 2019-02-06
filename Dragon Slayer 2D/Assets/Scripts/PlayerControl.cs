@@ -8,9 +8,10 @@ public class PlayerControl : MonoBehaviour
     public Transform groundCheck;
     public float speed, jumpForce, groundCheckRadius;
     public bool isAttacking = false;
+    [SerializeField] bool debugGroundCheck = false;
 
     Rigidbody2D rb;
-    SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     Animator animator;
     InputManager inputManager;
 
@@ -65,10 +66,19 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmos()
+    {
+        if (debugGroundCheck)
+        {
+            Gizmos.color = new Color(1, 0, 0, 0.5f);
+            Gizmos.DrawCube(groundCheck.position, new Vector3(0.36f, 0.105f));
+        }
+    }
+
     void HandleJumping()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
-
+        isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(0.36f, 0.105f), groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
+        
         if (inputManager.jumpButtonDown && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce);
