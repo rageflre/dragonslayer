@@ -31,10 +31,48 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        horizontalMovement = Input.GetAxisRaw("Horizontal");
-        verticalMovement = Input.GetAxisRaw("Vertical");
-        jumpButtonDown = Input.GetButtonDown("Jump");
-        attackButtonDown = Input.GetButtonDown("Fire1");
+        bool[] controllerConnect = new bool[2];
+
+        //Loops though all connected joysticks
+        foreach(string name in Input.GetJoystickNames())
+        {
+            //print("" + name);
+            if(name.Contains("Xbox One"))
+            {
+                controllerConnect[0] = true;
+            }
+            //Wireless gamepad = nintendo pro controller/joycons
+            else if(name.Equals("Wireless Gamepad"))
+            {
+                controllerConnect[1] = true;
+            }
+        }
+
+
+        //Xbox one controller conntected
+        if (controllerConnect[0])
+        {
+            horizontalMovement = Input.GetAxisRaw("LeftJoyStickHorizontal");
+            verticalMovement = Input.GetAxisRaw("LeftJoyStickVertical");
+            jumpButtonDown = Input.GetButtonDown("AButton");
+            attackButtonDown = Input.GetButtonDown("BButton");
+        }
+        //Nintendo joycon connected
+        else if(controllerConnect[1])
+        {
+            horizontalMovement = Input.GetAxisRaw("LeftJoyStickHorizontalJoycon");
+            verticalMovement = Input.GetAxisRaw("LeftJoyStickVerticalJoycon");
+            jumpButtonDown = Input.GetButtonDown("AButton");
+            attackButtonDown = Input.GetButtonDown("BButton");
+        }
+        //No controller connected so use keyboard
+        else
+        {
+            horizontalMovement = Input.GetAxisRaw("Horizontal");
+            verticalMovement = Input.GetAxisRaw("Vertical");
+            jumpButtonDown = Input.GetButtonDown("Jump");
+            attackButtonDown = Input.GetButtonDown("Fire1");
+        }
     }
 
 }

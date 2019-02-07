@@ -1,19 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
 {
+    public Transform groundCheck;
     public float speed, jumpForce, groundCheckRadius;
+    public bool isAttacking = false;
+    [SerializeField] bool debugGroundCheck = false;
+
     Rigidbody2D rb;
-    SpriteRenderer spriteRenderer;
-    Direction direction;
+    public SpriteRenderer spriteRenderer;
     Animator animator;
     InputManager inputManager;
-    public Transform groundCheck;
 
     float attackTimer;
-    public bool isAttacking = false;
     bool isGrounded;
 
     private void Awake()
@@ -22,8 +24,6 @@ public class PlayerControl : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        direction = GetComponent<Direction>();
 
         animator = GetComponent<Animator>();
 
@@ -41,28 +41,17 @@ public class PlayerControl : MonoBehaviour
 
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Grabs on what side you entered the collision
-        direction.hitDirection = direction.getDirection(collision);
+        if(collision.tag.Equals("Health") && GameManager.instance.currentHealth < 3)
+        {
+            GameManager.instance.IncreaseHealth();
+            collision.gameObject.SetActive(false);
+        }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //Sets on what side you entered the collision
-        direction.hitDirection = direction.getDirection(collision);
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        //Sets on what side you entered the collision
-        direction.hitDirection = direction.getDirection(collision);
-    }
-    
     void HandleMovement()
     {
-        bool hitLeftWall = direction.hitDirection.Equals(Direction.HitDirection.LEFT);
-        bool hitRightWall = direction.hitDirection.Equals(Direction.HitDirection.RIGHT);
 
         rb.velocity = new Vector2(inputManager.horizontalMovement * speed, rb.velocity.y);
 
@@ -77,10 +66,19 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmos()
+    {
+        if (debugGroundCheck)
+        {
+            Gizmos.color = new Color(1, 0, 0, 0.5f);
+            Gizmos.DrawCube(groundCheck.position, new Vector3(0.36f, 0.105f));
+        }
+    }
+
     void HandleJumping()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
-
+        isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(0.36f, 0.105f), groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
+        
         if (inputManager.jumpButtonDown && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce);

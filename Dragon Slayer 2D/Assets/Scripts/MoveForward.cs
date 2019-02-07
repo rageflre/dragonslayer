@@ -22,24 +22,31 @@ public class MoveForward : MonoBehaviour
         rb.velocity = new Vector2((spriteRenderer.flipX ? -1 : 1) * speed, rb.velocity.y);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-
-        if(collision.name.Equals("Player"))
+        if (collision.name.Equals("Player"))
         {
             bool isAttacking = collision.gameObject.GetComponent<PlayerControl>().isAttacking;
 
-            if(isAttacking)
+            if (isAttacking)
             {
+                GameManager.instance.IncreaseScore(1);
                 Destroy(gameObject);
-            } else
+            }
+            else
             {
-                print("Damage the player");
+                if (Time.time > GameManager.instance.invincibleTime)
+                {
+                    GameManager.instance.DecreaseHealth();
+                }
             }
 
             return;
         }
+    }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
         //Checks if the enemy recently turned around
         if (turnDelay > Time.time)
         {
