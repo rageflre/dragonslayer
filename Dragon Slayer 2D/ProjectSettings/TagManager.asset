@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Foreground
   - Health
+  - LadderTop
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Solid
   - Player
   - Enemy
-  - 
+  - Ladders
   - 
   - 
   - 

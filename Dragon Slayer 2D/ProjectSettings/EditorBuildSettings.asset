@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Reken-OPs.unity
     guid: 72f4bf251f060d7438e781241e174ed2
+  - enabled: 1
+    path: Assets/Scenes/TItle Screen.unity
+    guid: 5072538ccc5a7c94aac78f2f0df9cc94
   m_configObjects: {}
