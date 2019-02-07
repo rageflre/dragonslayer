@@ -5,21 +5,24 @@ using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
 {
-    public Transform groundCheck;
-    public float speed, jumpForce, groundCheckRadius;
+    Transform groundCheck;
+    float speed = 2, jumpForce = 235, groundCheckRadius = 0.105f;
     public bool isAttacking = false;
     [SerializeField] bool debugGroundCheck = false;
 
     Rigidbody2D rb;
     public SpriteRenderer spriteRenderer;
-    Animator animator;
+    public Animator animator;
     InputManager inputManager;
 
     float attackTimer;
     bool isGrounded;
+    PlatformEffector2D onPlatform;
+    float rotationTime;
 
     private void Awake()
     {
+        groundCheck = transform.GetChild(0).GetComponent<Transform>();
 
         rb = GetComponent<Rigidbody2D>();
 
@@ -39,6 +42,17 @@ public class PlayerControl : MonoBehaviour
 
         HandleAttacking();
 
+        HandleClimbing();
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (debugGroundCheck)
+        {
+            Gizmos.color = new Color(1, 0, 0, 0.5f);
+            Gizmos.DrawCube(groundCheck.position, new Vector3(0.36f, 0.105f));
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -66,15 +80,6 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        if (debugGroundCheck)
-        {
-            Gizmos.color = new Color(1, 0, 0, 0.5f);
-            Gizmos.DrawCube(groundCheck.position, new Vector3(0.36f, 0.105f));
-        }
-    }
-
     void HandleJumping()
     {
         isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(0.36f, 0.105f), groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
@@ -89,7 +94,7 @@ public class PlayerControl : MonoBehaviour
 
     void HandleAttacking()
     {
-        if (inputManager.attackButtonDown && !isAttacking) //Input.GetKeyDown(KeyCode.RightShift)
+        if (inputManager.attackButtonDown && !isAttacking)
         {
             isAttacking = true;
             attackTimer = Time.time + 0.325f;
@@ -102,4 +107,58 @@ public class PlayerControl : MonoBehaviour
         animator.SetBool("attacking", isAttacking);
     }
 
+    void HandleClimbing()
+    {
+        RaycastHit2D hitLadder = Physics2D.Raycast(groundCheck.position, Vector2.up, 5, 1 << LayerMask.NameToLayer("Ladders")), ladderTop = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
+
+        if(ladderTop.collider != null && ladderTop.collider.gameObject.tag.Equals("LadderTop"))
+        {
+            PlatformEffector2D platform = ladderTop.collider.GetComponent<PlatformEffector2D>();
+
+            if(platform != null)
+            {
+                onPlatform = platform;
+                if (inputManager.verticalMovement < 0)
+                {
+                    platform.rotationalOffset = 180;
+                    rotationTime = Time.time + 0.36f;
+                }
+            }
+        } else if(onPlatform != null && (Time.time > rotationTime || inputManager.verticalMovement > 0))
+        {
+            onPlatform.rotationalOffset = 0;
+            onPlatform = null;
+        }
+
+        if (hitLadder.collider != null)
+        {
+            if (Mathf.Abs(inputManager.verticalMovement) >= 0.7071f && Mathf.Abs(inputManager.horizontalMovement) >= 0.7071f && isGrounded)
+            {
+                return;
+            }
+
+            if (inputManager.verticalMovement < 0 && isGrounded)
+            {
+                animator.SetBool("climbing", false);
+                animator.SetBool("climbing_idle", false);
+            }
+            else if (inputManager.verticalMovement != 0)
+            {
+                animator.SetBool("climbing", true);
+                animator.SetBool("climbing_idle", false);
+                rb.velocity = inputManager.verticalMovement > 0 ? Vector2.up : Vector2.down;
+                rb.gravityScale = 0;
+            }
+            else if (!isGrounded && inputManager.horizontalMovement == 0) {
+                rb.velocity = Vector2.zero;
+                animator.SetBool("climbing_idle", true);
+            }
+        }
+        else
+        {
+            animator.SetBool("climbing", false);
+            animator.SetBool("climbing_idle", false);
+            rb.gravityScale = 1;
+        }
+    }
 }

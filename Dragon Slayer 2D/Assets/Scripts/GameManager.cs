@@ -38,6 +38,12 @@ public class GameManager : MonoBehaviour
         set;
     }
 
+    float hitTime
+    {
+        get;
+        set;
+    }
+
     private void Awake()
     {
         if (instance == null)
@@ -61,9 +67,18 @@ public class GameManager : MonoBehaviour
     {
         scoreText.text = "Score: " + currentScore;
         timeText.text = "Time: " + Mathf.Round(currentTime);
-        
-        if (Time.time > invincibleTime)
+
+        if (Time.time > invincibleTime && invincibleTime > 0)
+        {
             player.spriteRenderer.color = defaultColor;
+            invincibleTime = 0;
+        }
+
+        if(Time.time > hitTime && hitTime > 0)
+        {
+            player.animator.SetBool("gothit", false);
+            hitTime = 0;
+        }
     }
 
     private void FixedUpdate()
@@ -90,6 +105,9 @@ public class GameManager : MonoBehaviour
         healthSprites[currentHealth].enabled = false;
 
         invincibleTime = Time.time + 1;
+        hitTime = Time.time + 0.2f;
+
+        player.animator.SetBool("gothit", true);
 
         player.spriteRenderer.color = new Color(1f, 1f, 1f, .5f);
 
