@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class TitleScreenAnimation : MonoBehaviour
@@ -12,16 +11,15 @@ public class TitleScreenAnimation : MonoBehaviour
     public Transform[] pointerTarget;
     public GameObject pointer;
     public GameObject pointerSprite;
-    public Image blackPanel;
 
     private int selectedButton;
+    private int pointerSpeed;
 
     private void Start()
     {
         selectedButton = 0;
         pointer.transform.position = pointerTarget[0].position;
-        blackPanel.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
-        blackPanel.color = Color.clear;
+
 
     }
     private void Update()
@@ -29,6 +27,7 @@ public class TitleScreenAnimation : MonoBehaviour
         //Button input en logica (input werkt alleen als een pointer animatie niet bezig is)
         if (Mathf.Round(pointer.transform.position.x * 100) / 100.0 == Mathf.Round(pointerTarget[selectedButton].position.x * 100) / 100.0)
         {
+            pointerSpeed = 10;
             if (Input.GetKeyDown("return"))
             {
                 if (selectedButton == 0) { StartGame(); }
@@ -37,7 +36,7 @@ public class TitleScreenAnimation : MonoBehaviour
             }
             if (Input.GetKeyDown("up"))
             {
-                if (selectedButton == 0) { selectedButton = 2; }
+                if (selectedButton == 0) { selectedButton = 2; pointerSpeed = 20; }
                 else if (selectedButton == 1) { selectedButton = 0; }
                 else if (selectedButton == 2) { selectedButton = 1; }
             }
@@ -45,13 +44,13 @@ public class TitleScreenAnimation : MonoBehaviour
             {
                 if (selectedButton == 0) { selectedButton = 1; }
                 else if (selectedButton == 1) { selectedButton = 2; }
-                else if (selectedButton == 2) { selectedButton = 0; }
+                else if (selectedButton == 2) { selectedButton = 0; pointerSpeed = 20; }
             }
             
         }
         //Pointer verplaatst zich naar de pointer target position van de geselecteerd button
         {
-            pointer.transform.position = Vector2.MoveTowards(new Vector2(pointer.transform.position.x, pointer.transform.position.y), pointerTarget[selectedButton].position, 10f * Time.deltaTime);
+            pointer.transform.position = Vector2.MoveTowards(new Vector2(pointer.transform.position.x, pointer.transform.position.y), pointerTarget[selectedButton].position, pointerSpeed * Time.deltaTime);
         }
         //Oscilerende horizontale shift effect voor de pointer sprite
         {
@@ -78,17 +77,7 @@ public class TitleScreenAnimation : MonoBehaviour
     private void StartGame()
     {
         pointerSprite.SetActive(false);
-        StartCoroutine(FadeToBlack());
-    }
-    private IEnumerator FadeToBlack()
-    {
-        while (blackPanel.color.a < 0.99f)
-        {
-            blackPanel.color = Color.Lerp(blackPanel.color, Color.black, 7f * Time.deltaTime);
-            WaitForSeconds wait = new WaitForSeconds(Time.deltaTime);
-            yield return wait;
-        }
-        { SceneManager.LoadScene(1); }
+        SceneManager.LoadScene(2);
     }
     private void EndGame()
     {
@@ -96,6 +85,6 @@ public class TitleScreenAnimation : MonoBehaviour
     }
     private void Options()
     {
-
+        
     }
 }
