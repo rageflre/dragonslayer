@@ -7,6 +7,9 @@ TagManager:
   - Foreground
   - Health
   - LadderTop
+  - Spikes
+  - Throwing sword
+  - Enemy
   layers:
   - Default
   - TransparentFX

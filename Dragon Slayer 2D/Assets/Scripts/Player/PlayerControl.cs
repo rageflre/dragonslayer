@@ -42,6 +42,8 @@ public class PlayerControl : MonoBehaviour
 
         HandleAttacking();
 
+        HandleThrowing();
+
         HandleClimbing();
 
     }
@@ -62,6 +64,12 @@ public class PlayerControl : MonoBehaviour
             GameManager.instance.IncreaseHealth();
             collision.gameObject.SetActive(false);
         }
+
+        if(collision.tag.Equals("Throwing sword") && !GameManager.instance.collectedThrowingSword)
+        {
+            GameManager.instance.UnlockThrowingSword();
+            collision.gameObject.SetActive(false);
+        }
     }
 
     void HandleMovement()
@@ -77,6 +85,7 @@ public class PlayerControl : MonoBehaviour
         if (inputManager.horizontalMovement > 0.01f && spriteRenderer.flipX || inputManager.horizontalMovement < -0.01f && !spriteRenderer.flipX)
         {
             spriteRenderer.flipX = !spriteRenderer.flipX;
+            FlipThrowPosition();
         }
     }
 
@@ -94,7 +103,9 @@ public class PlayerControl : MonoBehaviour
 
     void HandleAttacking()
     {
-        if (inputManager.attackButtonDown && !isAttacking)
+        bool isClimbing = animator.GetBool("climbing") || animator.GetBool("climbing_idle");
+
+        if (inputManager.attackButtonDown && !isAttacking && !isClimbing)
         {
             isAttacking = true;
             attackTimer = Time.time + 0.325f;
@@ -107,10 +118,20 @@ public class PlayerControl : MonoBehaviour
         animator.SetBool("attacking", isAttacking);
     }
 
+    void HandleThrowing()
+    {
+        bool hasThrowable = GameManager.instance.throwableObject != null;
+        if (inputManager.throwButtonDown && hasThrowable)
+        {
+            Instantiate(GameManager.instance.throwableObject, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
+        }
+    }
+
     void HandleClimbing()
     {
-        RaycastHit2D hitLadder = Physics2D.Raycast(groundCheck.position, Vector2.up, 5, 1 << LayerMask.NameToLayer("Ladders")), ladderTop = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
+        RaycastHit2D hitLadder = Physics2D.Raycast(groundCheck.position, Vector2.up, groundCheckRadius, 1 << LayerMask.NameToLayer("Ladders")), ladderTop = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
 
+        //Checks if the player is colliding with the top of the ladder
         if(ladderTop.collider != null && ladderTop.collider.gameObject.tag.Equals("LadderTop"))
         {
             PlatformEffector2D platform = ladderTop.collider.GetComponent<PlatformEffector2D>();
@@ -121,15 +142,17 @@ public class PlayerControl : MonoBehaviour
                 if (inputManager.verticalMovement < 0)
                 {
                     platform.rotationalOffset = 180;
-                    rotationTime = Time.time + 0.36f;
+                    rotationTime = Time.time + 0.5f;
                 }
             }
-        } else if(onPlatform != null && (Time.time > rotationTime || inputManager.verticalMovement > 0))
+        }
+        else if(onPlatform != null && (Time.time > rotationTime || inputManager.verticalMovement > 0))
         {
             onPlatform.rotationalOffset = 0;
             onPlatform = null;
         }
 
+        //Handles if the player is colliding with the regular ladders
         if (hitLadder.collider != null)
         {
             if (Mathf.Abs(inputManager.verticalMovement) >= 0.7071f && Mathf.Abs(inputManager.horizontalMovement) >= 0.7071f && isGrounded)
@@ -149,7 +172,8 @@ public class PlayerControl : MonoBehaviour
                 rb.velocity = inputManager.verticalMovement > 0 ? Vector2.up : Vector2.down;
                 rb.gravityScale = 0;
             }
-            else if (!isGrounded && inputManager.horizontalMovement == 0) {
+            else if (!isGrounded && inputManager.horizontalMovement == 0 && rb.gravityScale == 0)
+            {
                 rb.velocity = Vector2.zero;
                 animator.SetBool("climbing_idle", true);
             }
@@ -160,5 +184,11 @@ public class PlayerControl : MonoBehaviour
             animator.SetBool("climbing_idle", false);
             rb.gravityScale = 1;
         }
+    }
+
+    void FlipThrowPosition()
+    {
+        transform.GetChild(1).localPosition = new Vector3(!spriteRenderer.flipX ? 0.193f : -0.193f, -0.074f, 0f);
+        transform.GetChild(1).transform.Rotate(0f, 180f, 0f);
     }
 }

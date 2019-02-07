@@ -29,6 +29,12 @@ public class InputManager : MonoBehaviour
         set;
     }
 
+    public bool throwButtonDown
+    {
+        get;
+        set;
+    }
+
     private void Update()
     {
         bool[] controllerConnect = new bool[2];
@@ -56,6 +62,7 @@ public class InputManager : MonoBehaviour
             verticalMovement = Input.GetAxisRaw("LeftJoyStickVertical");
             jumpButtonDown = Input.GetButtonDown("AButton");
             attackButtonDown = Input.GetButtonDown("BButton");
+            throwButtonDown = Input.GetButtonDown("XButton");
         }
         //Nintendo joycon connected
         else if(controllerConnect[1])
@@ -64,6 +71,7 @@ public class InputManager : MonoBehaviour
             verticalMovement = Input.GetAxisRaw("LeftJoyStickVerticalJoycon");
             jumpButtonDown = Input.GetButtonDown("AButton");
             attackButtonDown = Input.GetButtonDown("BButton");
+            throwButtonDown = Input.GetButtonDown("XButton");
         }
         //No controller connected so use keyboard
         else
@@ -72,6 +80,7 @@ public class InputManager : MonoBehaviour
             verticalMovement = Input.GetAxisRaw("Vertical");
             jumpButtonDown = Input.GetButtonDown("Jump");
             attackButtonDown = Input.GetButtonDown("Fire1");
+            throwButtonDown = Input.GetButtonDown("Fire2");
         }
     }
 

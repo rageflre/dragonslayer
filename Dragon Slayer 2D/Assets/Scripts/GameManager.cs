@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
+    public GameObject throwableSword;
     public GameObject playerObject;
     public Image[] healthSprites;
     public Text scoreText, timeText;
@@ -44,6 +45,18 @@ public class GameManager : MonoBehaviour
         set;
     }
 
+    public bool collectedThrowingSword
+    {
+        get;
+        set;
+    }
+
+    public GameObject throwableObject
+    {
+        get;
+        set;
+    }
+
     private void Awake()
     {
         if (instance == null)
@@ -56,6 +69,9 @@ public class GameManager : MonoBehaviour
         currentHealth = 3;
         currentScore = 0;
         currentTime = 0;
+        collectedThrowingSword = false;
+        throwableObject = throwableSword;
+
     }
 
     private void Start()
@@ -86,6 +102,12 @@ public class GameManager : MonoBehaviour
         currentTime += Time.deltaTime;
     }
 
+    public void UnlockThrowingSword()
+    {
+        collectedThrowingSword = true;
+        throwableObject = throwableSword;
+    }
+
     public void IncreaseScore(int increase)
     {
         currentScore += increase;
@@ -113,8 +135,14 @@ public class GameManager : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            SceneManager.LoadScene(0);
+            HandleDeath();
         }
     }
 
+    public void HandleDeath()
+    {
+
+        SceneManager.LoadScene(0);
+
+    }
 }
