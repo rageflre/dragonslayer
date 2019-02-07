@@ -12,35 +12,38 @@ public class TitleScreenAnimation : MonoBehaviour
     public GameObject pointer;
     public GameObject pointerSprite;
 
+
     private int selectedButton;
     private int pointerSpeed;
+
+    InputManager InputScript;
 
     private void Start()
     {
         selectedButton = 0;
         pointer.transform.position = pointerTarget[0].position;
-
+        InputScript = GetComponent<InputManager>();
 
     }
     private void Update()
     {
         //Button input en logica (input werkt alleen als een pointer animatie niet bezig is)
-        if (Mathf.Round(pointer.transform.position.x * 100) / 100.0 == Mathf.Round(pointerTarget[selectedButton].position.x * 100) / 100.0)
+        if (Mathf.Round(pointer.transform.position.y * 100) / 100.0 == Mathf.Round(pointerTarget[selectedButton].position.y * 100) / 100.0)
         {
-            pointerSpeed = 10;
+            pointerSpeed = 7;
             if (Input.GetKeyDown("return"))
             {
                 if (selectedButton == 0) { StartGame(); }
                 if (selectedButton == 2) { EndGame(); }
                 if (selectedButton == 1) { Options(); }
             }
-            if (Input.GetKeyDown("up"))
+            if (InputScript.verticalMovement == 1)
             {
                 if (selectedButton == 0) { selectedButton = 2; pointerSpeed = 20; }
                 else if (selectedButton == 1) { selectedButton = 0; }
                 else if (selectedButton == 2) { selectedButton = 1; }
             }
-            else if (Input.GetKeyDown("down"))
+            else if (InputScript.verticalMovement == -1)
             {
                 if (selectedButton == 0) { selectedButton = 1; }
                 else if (selectedButton == 1) { selectedButton = 2; }
@@ -63,7 +66,7 @@ public class TitleScreenAnimation : MonoBehaviour
                 {
                     //reset scale en kleur voor de buttons
                     buttons[i].transform.localScale = new Vector2(1f, 1f);
-                    buttonText[i].color = Color.black;
+                    buttonText[i].color = Color.yellow;
                 }
                 else
                 {

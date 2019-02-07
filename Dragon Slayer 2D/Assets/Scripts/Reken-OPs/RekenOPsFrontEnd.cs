@@ -20,12 +20,14 @@ public class RekenOPsFrontEnd : MonoBehaviour
     private bool isInteractable = true;
 
     RekenOPsBackEnd BackEnd;
+    InputManager InputScript;
 
     private void Start()
     {
         selectedButton = 0;
         pointer.transform.position = pointerTarget[0].position;
         BackEnd = GetComponent<RekenOPsBackEnd>();
+        InputScript = GetComponent<InputManager>();
         blackPanel.rectTransform.localScale = new Vector2(Screen.width, Screen.height);
         blackPanel.color = Color.clear;
         pointerSprite.SetActive(true);
@@ -35,7 +37,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
         //Button input en logica (input werkt alleen als een pointer animatie niet bezig is)
         if (Mathf.Round(pointer.transform.position.y * 100) / 100.0 == Mathf.Round(pointerTarget[selectedButton].position.y * 100) / 100.0 && isInteractable)
         {
-            pointerSpeed = 10;
+            pointerSpeed = 7;
             if (Input.GetKeyDown("return"))
             {
                 Debug.Log("je hebt enter gedrukt");
@@ -43,14 +45,14 @@ public class RekenOPsFrontEnd : MonoBehaviour
                 Debug.Log("dit is de result " + BackEnd.result);
                 if (BackEnd.FieldText[selectedButton] == BackEnd.result) { CorrectAnswer(); Debug.Log("Correct"); correctAnswerGiven = true; isInteractable = false; } else { WrongAnswer(); isInteractable = false; }
             }
-            if (Input.GetKeyDown("up"))
+            if (InputScript.verticalMovement == 1)
             {
                 if (selectedButton == 0) { selectedButton = 3; pointerSpeed = 40; }
                 else if (selectedButton == 1) { selectedButton = 0; }
                 else if (selectedButton == 2) { selectedButton = 1; }
                 else if (selectedButton == 3) { selectedButton = 2; }
             }
-            else if (Input.GetKeyDown("down"))
+            else if (InputScript.verticalMovement == -1)
             {
                 if (selectedButton == 0) { selectedButton = 1; }
                 else if (selectedButton == 1) { selectedButton = 2; }
@@ -75,7 +77,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
                     {
                         //reset scale en kleur voor de buttons
                         buttons[i].transform.localScale = new Vector2(1f, 1f);
-                        buttonText[i].color = Color.black;
+                        buttonText[i].color = Color.yellow;
                     }
                     else
                     {
