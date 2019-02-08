@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour
 {
@@ -30,6 +31,12 @@ public class InputManager : MonoBehaviour
     }
 
     public bool throwButtonDown
+    {
+        get;
+        set;
+    }
+
+    public bool quitButtonDown
     {
         get;
         set;
@@ -81,6 +88,12 @@ public class InputManager : MonoBehaviour
             jumpButtonDown = Input.GetButtonDown("Jump");
             attackButtonDown = Input.GetButtonDown("Fire1");
             throwButtonDown = Input.GetButtonDown("Fire2");
+            quitButtonDown = Input.GetKeyDown(KeyCode.Escape);
+        }
+
+        if (quitButtonDown)
+        {
+            SceneManager.LoadScene("TItle Screen");
         }
     }
 
