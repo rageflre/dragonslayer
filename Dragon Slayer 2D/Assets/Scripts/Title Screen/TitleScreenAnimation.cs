@@ -31,7 +31,7 @@ public class TitleScreenAnimation : MonoBehaviour
         if (Mathf.Round(pointer.transform.position.y * 100) / 100.0 == Mathf.Round(pointerTarget[selectedButton].position.y * 100) / 100.0)
         {
             pointerSpeed = 7;
-            if (Input.GetKeyDown("return"))
+            if (Input.GetKeyDown("return") || InputScript.jumpButtonDown)
             {
                 if (selectedButton == 0) { StartGame(); }
                 if (selectedButton == 2) { EndGame(); }

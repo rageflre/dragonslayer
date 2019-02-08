@@ -70,8 +70,6 @@ public class GameManager : MonoBehaviour
         currentScore = 0;
         currentTime = 0;
         collectedThrowingSword = false;
-        throwableObject = throwableSword;
-
     }
 
     private void Start()

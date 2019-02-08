@@ -15,8 +15,8 @@ public class PlayerControl : MonoBehaviour
     public Animator animator;
     InputManager inputManager;
 
-    float attackTimer;
-    bool isGrounded;
+    float attackTimer, attackReset, throwTimer;
+    bool isGrounded, isThrowing, isClimbing, canAttack;
     PlatformEffector2D onPlatform;
     float rotationTime;
 
@@ -103,17 +103,22 @@ public class PlayerControl : MonoBehaviour
 
     void HandleAttacking()
     {
-        bool isClimbing = animator.GetBool("climbing") || animator.GetBool("climbing_idle");
 
-        if (inputManager.attackButtonDown && !isAttacking && !isClimbing)
+        if (inputManager.attackButtonDown && canAttack && !isClimbing)
         {
             isAttacking = true;
-            attackTimer = Time.time + 0.325f;
+            canAttack = false;
+            attackReset = Time.time + 0.325f;
+            attackTimer = Time.time + 0.65f;
         }
 
-        if(Time.time > attackTimer)
+        if(Time.time > attackReset)
         {
             isAttacking = false;
+        }
+        if(Time.time > attackTimer)
+        {
+            canAttack = true;
         }
         animator.SetBool("attacking", isAttacking);
     }
@@ -121,14 +126,22 @@ public class PlayerControl : MonoBehaviour
     void HandleThrowing()
     {
         bool hasThrowable = GameManager.instance.throwableObject != null;
-        if (inputManager.throwButtonDown && hasThrowable)
+        if (inputManager.throwButtonDown && hasThrowable && !isThrowing && !isClimbing)
         {
             Instantiate(GameManager.instance.throwableObject, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
+            isThrowing = true;
+            throwTimer = Time.time + 0.5f;
+        }
+
+        if (Time.time > throwTimer)
+        {
+            isThrowing = false;
         }
     }
 
     void HandleClimbing()
     {
+        isClimbing = animator.GetBool("climbing") || animator.GetBool("climbing_idle");
         RaycastHit2D hitLadder = Physics2D.Raycast(groundCheck.position, Vector2.up, groundCheckRadius, 1 << LayerMask.NameToLayer("Ladders")), ladderTop = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
 
         //Checks if the player is colliding with the top of the ladder

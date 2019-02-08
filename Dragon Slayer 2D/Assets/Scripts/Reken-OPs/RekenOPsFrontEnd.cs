@@ -38,7 +38,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
         if (Mathf.Round(pointer.transform.position.y * 100) / 100.0 == Mathf.Round(pointerTarget[selectedButton].position.y * 100) / 100.0 && isInteractable)
         {
             pointerSpeed = 7;
-            if (Input.GetKeyDown("return"))
+            if (Input.GetKeyDown("return") || InputScript.jumpButtonDown)
             {
                 Debug.Log("je hebt enter gedrukt");
                 Debug.Log("Dit is de field text " + BackEnd.FieldText[selectedButton]);
