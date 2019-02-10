@@ -93,14 +93,14 @@ public class RekenOPsFrontEnd : MonoBehaviour
     {
         buttonText[selectedButton].color = Color.green;
         buttons[selectedButton].transform.localScale = new Vector2(1.3f, 1.3f);
-        BackEnd.equationText.text = "Correct Answer!";
+        BackEnd.equationText.text = "Correct!";
         StartCoroutine(Wait123());
     }
     void WrongAnswer()
     {
         buttonText[selectedButton].color = Color.grey;
         buttons[selectedButton].transform.localScale = new Vector2(1.3f, 1.3f);
-        BackEnd.equationText.text = "Wrong Answer!";
+        BackEnd.equationText.text = "Wrong!";
         StartCoroutine(Wait123());
     }
     IEnumerator Wait123()

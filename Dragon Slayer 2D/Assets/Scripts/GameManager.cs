@@ -45,12 +45,6 @@ public class GameManager : MonoBehaviour
         set;
     }
 
-    public bool collectedThrowingSword
-    {
-        get;
-        set;
-    }
-
     public GameObject throwableObject
     {
         get;
@@ -69,7 +63,6 @@ public class GameManager : MonoBehaviour
         currentHealth = 3;
         currentScore = 0;
         currentTime = 0;
-        collectedThrowingSword = false;
     }
 
     private void Start()
@@ -100,9 +93,8 @@ public class GameManager : MonoBehaviour
         currentTime += Time.deltaTime;
     }
 
-    public void UnlockThrowingSword()
+    public void PickupThrowableSword()
     {
-        collectedThrowingSword = true;
         throwableObject = throwableSword;
     }
 

@@ -62,13 +62,13 @@ public class PlayerControl : MonoBehaviour
         if(collision.tag.Equals("Health") && GameManager.instance.currentHealth < 3)
         {
             GameManager.instance.IncreaseHealth();
-            collision.gameObject.SetActive(false);
+            Destroy(collision.gameObject);
         }
 
-        if(collision.tag.Equals("Throwing sword") && !GameManager.instance.collectedThrowingSword)
+        if(collision.tag.Equals("Throwing sword"))
         {
-            GameManager.instance.UnlockThrowingSword();
-            collision.gameObject.SetActive(false);
+            GameManager.instance.PickupThrowableSword();
+            Destroy(collision.gameObject);
         }
     }
 
@@ -125,10 +125,14 @@ public class PlayerControl : MonoBehaviour
 
     void HandleThrowing()
     {
+        if (GameManager.instance == null)
+            print("GameManager.instance");
         bool hasThrowable = GameManager.instance.throwableObject != null;
+
         if (inputManager.throwButtonDown && hasThrowable && !isThrowing && !isClimbing)
         {
             Instantiate(GameManager.instance.throwableObject, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
+            GameManager.instance.throwableObject = null;
             isThrowing = true;
             throwTimer = Time.time + 0.5f;
         }
