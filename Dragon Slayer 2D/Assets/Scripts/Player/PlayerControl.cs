@@ -74,6 +74,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    
     void HandleMovement()
     {
 
@@ -127,8 +128,6 @@ public class PlayerControl : MonoBehaviour
 
     void HandleThrowing()
     {
-        if (GameManager.instance == null) return;
-
         bool hasThrowable = GameManager.instance.throwableObject != null;
 
         if (inputManager.xButtonPressed && hasThrowable && !isThrowing && !isClimbing)
@@ -136,12 +135,14 @@ public class PlayerControl : MonoBehaviour
             Instantiate(GameManager.instance.throwableObject, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
             GameManager.instance.throwableObject = null;
             isThrowing = true;
-            throwTimer = Time.time + 0.5f;
+            throwTimer = Time.time + 0.3f;
+            animator.SetBool("throwing", isThrowing);
         }
 
         if (Time.time > throwTimer)
         {
             isThrowing = false;
+            animator.SetBool("throwing", isThrowing);
         }
     }
 
@@ -205,7 +206,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    float dashTimer, maxDash = 0.5f, dashCooldownTimer = 1f;
+    float dashTimer, maxDash = 0.5f, dashCooldownTimer = 2f;
     bool dashCooldown;
 
     void HandleDash()
@@ -215,16 +216,17 @@ public class PlayerControl : MonoBehaviour
             isDashing = true;
             animator.SetBool("dashing", true);
         }
+        if(isDashing && !inputManager.rbButtonHeld && dashTimer >= 0.2f)
+        {
+            SetDashingCooldown();
+        }
         if(isDashing)
         {
             rb.velocity = new Vector2((spriteRenderer.flipX ? -1 : 1) * 5, 0);
             dashTimer += Time.deltaTime;
             if(dashTimer >= maxDash)
             {
-                dashTimer = dashCooldownTimer;
-                isDashing = false;
-                dashCooldown = true;
-                animator.SetBool("dashing", false);
+                SetDashingCooldown();
             }
         }
         if(dashCooldown)
@@ -236,6 +238,14 @@ public class PlayerControl : MonoBehaviour
                 dashCooldown = false;
             }
         }
+    }
+
+    void SetDashingCooldown()
+    {
+        dashTimer = dashCooldownTimer;
+        isDashing = false;
+        dashCooldown = true;
+        animator.SetBool("dashing", false);
     }
 
     void FlipThrowPosition()

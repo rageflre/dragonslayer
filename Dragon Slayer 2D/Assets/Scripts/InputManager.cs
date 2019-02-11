@@ -109,8 +109,6 @@ public class InputManager : MonoBehaviour
             lbButtonPressed = Input.GetButtonDown("SLButton");
             rbButtonPressed = Input.GetButtonDown("SRButton");
             rbButtonHeld = Input.GetButton("SRButton");
-            //lbButtonPressed = Input.GetKeyDown(KeyCode.JoystickButton4);
-            //rbButtonPressed = Input.GetKeyDown(KeyCode.JoystickButton5);
         }
         //No controller connected so use keyboard
         else

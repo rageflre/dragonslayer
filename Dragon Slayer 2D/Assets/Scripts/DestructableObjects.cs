@@ -40,16 +40,8 @@ public class DestructableObjects : MonoBehaviour
                     //body2D.AddForce(Vector3.up * Random.Range(50, 200));
                 }
 
-                 //GameManager.instance.SpawnRandomPickup(gameObject.transform);
+                 GameManager.instance.SpawnRandomPickup(gameObject.transform);
                  Destroy(gameObject);
-
-
-
-             
-
-                
-
-
             }
         }
     }
