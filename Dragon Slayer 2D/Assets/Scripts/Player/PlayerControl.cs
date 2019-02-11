@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class PlayerControl : MonoBehaviour
 {
     Transform groundCheck;
-    float speed = 2, jumpForce = 235, groundCheckRadius = 0.105f;
+    float speed = 2, jumpForce = 235, groundCheckRadius = 0.105f, dashSpeed = 100;
     public bool isAttacking = false;
     [SerializeField] bool debugGroundCheck = false;
 
@@ -16,7 +16,7 @@ public class PlayerControl : MonoBehaviour
     InputManager inputManager;
 
     float attackTimer, attackReset, throwTimer;
-    bool isGrounded, isThrowing, isClimbing, canAttack;
+    bool isGrounded, isThrowing, isClimbing, isDashing, canAttack;
     PlatformEffector2D onPlatform;
     float rotationTime;
 
@@ -45,6 +45,8 @@ public class PlayerControl : MonoBehaviour
         HandleThrowing();
 
         HandleClimbing();
+
+        HandleDash();
 
     }
 
@@ -93,7 +95,7 @@ public class PlayerControl : MonoBehaviour
     {
         isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(0.36f, 0.105f), groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
         
-        if (inputManager.jumpButtonDown && isGrounded)
+        if (inputManager.aButtonPressed && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce);
         }
@@ -104,7 +106,7 @@ public class PlayerControl : MonoBehaviour
     void HandleAttacking()
     {
 
-        if (inputManager.attackButtonDown && canAttack && !isClimbing)
+        if (inputManager.bButtonPressed && canAttack && !isClimbing)
         {
             isAttacking = true;
             canAttack = false;
@@ -125,11 +127,11 @@ public class PlayerControl : MonoBehaviour
 
     void HandleThrowing()
     {
-        if (GameManager.instance == null)
-            print("GameManager.instance");
+        if (GameManager.instance == null) return;
+
         bool hasThrowable = GameManager.instance.throwableObject != null;
 
-        if (inputManager.throwButtonDown && hasThrowable && !isThrowing && !isClimbing)
+        if (inputManager.xButtonPressed && hasThrowable && !isThrowing && !isClimbing)
         {
             Instantiate(GameManager.instance.throwableObject, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
             GameManager.instance.throwableObject = null;
@@ -200,6 +202,39 @@ public class PlayerControl : MonoBehaviour
             animator.SetBool("climbing", false);
             animator.SetBool("climbing_idle", false);
             rb.gravityScale = 1;
+        }
+    }
+
+    float dashTimer, maxDash = 0.5f, dashCooldownTimer = 1f;
+    bool dashCooldown;
+
+    void HandleDash()
+    {
+        if (inputManager.rbButtonHeld && !isDashing && !dashCooldown && !isClimbing)
+        {
+            isDashing = true;
+            animator.SetBool("dashing", true);
+        }
+        if(isDashing)
+        {
+            rb.velocity = new Vector2((spriteRenderer.flipX ? -1 : 1) * 5, 0);
+            dashTimer += Time.deltaTime;
+            if(dashTimer >= maxDash)
+            {
+                dashTimer = dashCooldownTimer;
+                isDashing = false;
+                dashCooldown = true;
+                animator.SetBool("dashing", false);
+            }
+        }
+        if(dashCooldown)
+        {
+            dashTimer -= Time.deltaTime;
+            if(dashTimer <= 0)
+            {
+                dashTimer = 0;
+                dashCooldown = false;
+            }
         }
     }
 

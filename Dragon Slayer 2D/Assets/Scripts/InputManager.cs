@@ -18,25 +18,49 @@ public class InputManager : MonoBehaviour
         set;
     }
 
-    public bool jumpButtonDown
+    public bool aButtonPressed
     {
         get;
         set;
     }
 
-    public bool attackButtonDown
+    public bool bButtonPressed
     {
         get;
         set;
     }
 
-    public bool throwButtonDown
+    public bool xButtonPressed
     {
         get;
         set;
     }
 
-    public bool quitButtonDown
+    public bool yButtonPressed
+    {
+        get;
+        set;
+    }
+
+    public bool lbButtonPressed
+    {
+        get;
+        set;
+    }
+
+    public bool rbButtonPressed
+    {
+        get;
+        set;
+    }
+
+    public bool rbButtonHeld
+    {
+        get;
+        set;
+    }
+
+    public bool quitButtonPressed
     {
         get;
         set;
@@ -67,31 +91,39 @@ public class InputManager : MonoBehaviour
         {
             horizontalMovement = Input.GetAxisRaw("LeftJoyStickHorizontal");
             verticalMovement = Input.GetAxisRaw("LeftJoyStickVertical");
-            jumpButtonDown = Input.GetButtonDown("AButton");
-            attackButtonDown = Input.GetButtonDown("BButton");
-            throwButtonDown = Input.GetButtonDown("XButton");
+            aButtonPressed = Input.GetButtonDown("AButton");
+            bButtonPressed = Input.GetButtonDown("BButton");
+            xButtonPressed = Input.GetButtonDown("XButton");
+            yButtonPressed = Input.GetButtonDown("YButton");
         }
         //Nintendo joycon connected
         else if(controllerConnect[1])
         {
             horizontalMovement = Input.GetAxisRaw("LeftJoyStickHorizontalJoycon");
             verticalMovement = Input.GetAxisRaw("LeftJoyStickVerticalJoycon");
-            jumpButtonDown = Input.GetButtonDown("AButton");
-            attackButtonDown = Input.GetButtonDown("BButton");
-            throwButtonDown = Input.GetButtonDown("XButton");
+            aButtonPressed = Input.GetButtonDown("AButton");
+            bButtonPressed = Input.GetButtonDown("BButton");
+            xButtonPressed = Input.GetButtonDown("XButton");
+            yButtonPressed = Input.GetButtonDown("YButton");
+            quitButtonPressed = Input.GetButtonDown("MinusButton");
+            lbButtonPressed = Input.GetButtonDown("SLButton");
+            rbButtonPressed = Input.GetButtonDown("SRButton");
+            rbButtonHeld = Input.GetButton("SRButton");
+            //lbButtonPressed = Input.GetKeyDown(KeyCode.JoystickButton4);
+            //rbButtonPressed = Input.GetKeyDown(KeyCode.JoystickButton5);
         }
         //No controller connected so use keyboard
         else
         {
             horizontalMovement = Input.GetAxisRaw("Horizontal");
             verticalMovement = Input.GetAxisRaw("Vertical");
-            jumpButtonDown = Input.GetButtonDown("Jump");
-            attackButtonDown = Input.GetButtonDown("Fire1");
-            throwButtonDown = Input.GetButtonDown("Fire2");
-            quitButtonDown = Input.GetKeyDown(KeyCode.Escape);
+            aButtonPressed = Input.GetButtonDown("Jump");
+            bButtonPressed = Input.GetButtonDown("Fire1");
+            xButtonPressed = Input.GetButtonDown("Fire2");
+            quitButtonPressed = Input.GetKeyDown(KeyCode.Escape);
         }
 
-        if (quitButtonDown)
+        if (quitButtonPressed)
         {
             SceneManager.LoadScene("TItle Screen");
         }
