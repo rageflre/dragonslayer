@@ -10,6 +10,7 @@ TagManager:
   - Spikes
   - Throwing sword
   - Enemy
+  - Candle
   layers:
   - Default
   - TransparentFX

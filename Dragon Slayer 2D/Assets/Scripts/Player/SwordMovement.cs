@@ -47,6 +47,11 @@ public class SwordMovement : MonoBehaviour
             DestroySword();
             Destroy(collision.gameObject);
         }
+        else if(collision.gameObject.tag.Equals("Candle"))
+        {
+            GameManager.instance.SpawnRandomPickup(gameObject.transform);
+            Destroy(collision.gameObject);
+        }
     }
 
     void DestroySword()

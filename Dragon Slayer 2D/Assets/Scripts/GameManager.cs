@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject playerObject;
     public Image[] healthSprites;
     public Text scoreText, timeText;
+    public GameObject[] pickUps;
 
     PlayerControl player;
     Color defaultColor;
@@ -81,7 +82,7 @@ public class GameManager : MonoBehaviour
             invincibleTime = 0;
         }
 
-        if(Time.time > hitTime && hitTime > 0)
+        if (Time.time > hitTime && hitTime > 0)
         {
             player.animator.SetBool("gothit", false);
             hitTime = 0;
@@ -135,4 +136,10 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
 
     }
+    public void SpawnRandomPickup(Transform _transform)
+    {
+        Instantiate(pickUps[Random.Range(0, pickUps.Length)],_transform.position, _transform.rotation);
+    }
 }
+
+
