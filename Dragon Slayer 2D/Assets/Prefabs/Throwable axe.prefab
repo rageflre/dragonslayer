@@ -223,3 +223,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnedObject: {fileID: 6469439147174217794, guid: 275c6451a5d1ed04fbf8d37d0b2831d6,
     type: 3}
+  objectShatterer: {fileID: 5336575477899579478, guid: 3a61c6c2ff26db94f93c62390c672efc,
+    type: 3}

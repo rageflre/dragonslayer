@@ -8,7 +8,7 @@ public class SwordMovement : MonoBehaviour
     float speed = 4, rotateTimer;
     Rigidbody2D rb;
     Quaternion originalRotation;
-    public GameObject spawnedObject;
+    public GameObject spawnedObject, objectShatterer;
 
     
 
@@ -49,7 +49,8 @@ public class SwordMovement : MonoBehaviour
         }
         else if(collision.gameObject.tag.Equals("Candle"))
         {
-            GameManager.instance.SpawnRandomPickup(gameObject.transform);
+            GameManager.instance.SpawnBrokenObject(gameObject.transform, objectShatterer);
+            GameManager.instance.SpawnRandomPickup(collision.gameObject.transform);
             Destroy(collision.gameObject);
         }
     }

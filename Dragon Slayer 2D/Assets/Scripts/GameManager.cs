@@ -136,9 +136,24 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
 
     }
-    public void SpawnRandomPickup(Transform _transform)
+    public void SpawnRandomPickup(Transform _transform) 
     {
-        Instantiate(pickUps[Random.Range(0, pickUps.Length)],_transform.position, _transform.rotation);
+        //Calls a random pickup from the array - Anthony
+        Instantiate(pickUps[Random.Range(0, pickUps.Length)],_transform.position, _transform.rotation); 
+    }
+    public void SpawnBrokenObject(Transform _transform, GameObject _gameObject)
+    {
+        //Keeps looping until the int i is no longer larger than 3 - Anthony
+        for (int i = 0; i < 3; i++)
+        {
+            _transform.TransformPoint(0, -100, 0);
+            GameObject clone = Instantiate(_gameObject, _transform.position, Quaternion.identity);
+
+            Rigidbody2D rb = clone.GetComponent<Rigidbody2D>();
+            //Adds movement force in the right and upward direction - Anthony
+            rb.AddForce(Vector3.right * Random.Range(-100, 50));
+            rb.AddForce(Vector3.up * Random.Range(50, 150));
+        }
     }
 }
 
