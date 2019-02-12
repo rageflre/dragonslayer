@@ -107,7 +107,7 @@ public class PlayerControl : MonoBehaviour
     void HandleAttacking()
     {
 
-        if (inputManager.bButtonPressed && canAttack && !isClimbing)
+        if (inputManager.bButtonPressed && canAttack && !isClimbing && !isDashing)
         {
             isAttacking = true;
             canAttack = false;
@@ -213,8 +213,13 @@ public class PlayerControl : MonoBehaviour
     {
         if (inputManager.rbButtonHeld && !isDashing && !dashCooldown && !isClimbing)
         {
+            if(isAttacking)
+            {
+                isAttacking = false;
+                animator.SetBool("attacking", isAttacking);
+            }
             isDashing = true;
-            animator.SetBool("dashing", true);
+            animator.SetBool("dashing", isDashing);
         }
         if(isDashing && !inputManager.rbButtonHeld && dashTimer >= 0.2f)
         {
@@ -245,7 +250,7 @@ public class PlayerControl : MonoBehaviour
         dashTimer = dashCooldownTimer;
         isDashing = false;
         dashCooldown = true;
-        animator.SetBool("dashing", false);
+        animator.SetBool("dashing", isDashing);
     }
 
     void FlipThrowPosition()

@@ -15,6 +15,7 @@ public class TitleScreenAnimation : MonoBehaviour
 
     private int selectedButton;
     private int pointerSpeed;
+    float buttonSwitchDelay;
 
     InputManager InputScript;
 
@@ -25,6 +26,7 @@ public class TitleScreenAnimation : MonoBehaviour
         InputScript = GetComponent<InputManager>();
 
     }
+
     private void Update()
     {
         //Button input en logica (input werkt alleen als een pointer animatie niet bezig is)
@@ -37,17 +39,19 @@ public class TitleScreenAnimation : MonoBehaviour
                 if (selectedButton == 2) { EndGame(); }
                 if (selectedButton == 1) { Options(); }
             }
-            if (InputScript.verticalMovement == 1)
+            if (InputScript.verticalMovement == 1 && Time.time >= buttonSwitchDelay)
             {
                 if (selectedButton == 0) { selectedButton = 2; pointerSpeed = 20; }
                 else if (selectedButton == 1) { selectedButton = 0; }
                 else if (selectedButton == 2) { selectedButton = 1; }
+                buttonSwitchDelay = Time.time + 0.25f;
             }
-            else if (InputScript.verticalMovement == -1)
+            else if (InputScript.verticalMovement == -1 && Time.time >= buttonSwitchDelay)
             {
                 if (selectedButton == 0) { selectedButton = 1; }
                 else if (selectedButton == 1) { selectedButton = 2; }
                 else if (selectedButton == 2) { selectedButton = 0; pointerSpeed = 20; }
+                buttonSwitchDelay = Time.time + 0.25f;
             }
             
         }

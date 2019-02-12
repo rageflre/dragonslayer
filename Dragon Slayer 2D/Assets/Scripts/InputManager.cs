@@ -68,36 +68,20 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        bool[] controllerConnect = new bool[2];
+        bool controllerConnected = false;
 
         //Loops though all connected joysticks
         foreach(string name in Input.GetJoystickNames())
         {
-            //print("" + name);
-            if(name.Contains("Xbox One"))
-            {
-                controllerConnect[0] = true;
-            }
             //Wireless gamepad = nintendo pro controller/joycons
-            else if(name.Equals("Wireless Gamepad"))
+            if(name.Equals("Wireless Gamepad"))
             {
-                controllerConnect[1] = true;
+                controllerConnected = true;
             }
         }
 
-
-        //Xbox one controller conntected
-        if (controllerConnect[0])
-        {
-            horizontalMovement = Input.GetAxisRaw("LeftJoyStickHorizontal");
-            verticalMovement = Input.GetAxisRaw("LeftJoyStickVertical");
-            aButtonPressed = Input.GetButtonDown("AButton");
-            bButtonPressed = Input.GetButtonDown("BButton");
-            xButtonPressed = Input.GetButtonDown("XButton");
-            yButtonPressed = Input.GetButtonDown("YButton");
-        }
         //Nintendo joycon connected
-        else if(controllerConnect[1])
+        if(controllerConnected)
         {
             horizontalMovement = Input.GetAxisRaw("LeftJoyStickHorizontalJoycon");
             verticalMovement = Input.GetAxisRaw("LeftJoyStickVerticalJoycon");
@@ -116,9 +100,11 @@ public class InputManager : MonoBehaviour
             horizontalMovement = Input.GetAxisRaw("Horizontal");
             verticalMovement = Input.GetAxisRaw("Vertical");
             aButtonPressed = Input.GetButtonDown("Jump");
-            bButtonPressed = Input.GetButtonDown("Fire1");
-            xButtonPressed = Input.GetButtonDown("Fire2");
+            bButtonPressed = Input.GetKeyDown(KeyCode.F);
+            xButtonPressed = Input.GetKeyDown(KeyCode.R);
             quitButtonPressed = Input.GetKeyDown(KeyCode.Escape);
+            rbButtonPressed = Input.GetKeyDown(KeyCode.LeftShift);
+            rbButtonHeld = Input.GetKeyDown(KeyCode.LeftShift);
         }
 
         if (quitButtonPressed)

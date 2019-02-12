@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
     public GameObject throwableSword;
-    public GameObject playerObject;
+    public GameObject playerObject, brokenCandle;
     public Image[] healthSprites;
     public Text scoreText, timeText;
     public GameObject[] pickUps;
@@ -141,8 +141,19 @@ public class GameManager : MonoBehaviour
         //Calls a random pickup from the array - Anthony
         Instantiate(pickUps[Random.Range(0, pickUps.Length)],_transform.position, _transform.rotation); 
     }
-    public void SpawnBrokenObject(Transform _transform, GameObject _gameObject)
+    public void SpawnBrokenObject(Transform _transform, string tag)
     {
+        GameObject _gameObject = null;
+
+        switch(tag)
+        {
+            case "Candle":
+                _gameObject = brokenCandle;
+                break;
+        }
+
+        if (_gameObject == null) return;
+
         //Keeps looping until the int i is no longer larger than 3 - Anthony
         for (int i = 0; i < 3; i++)
         {

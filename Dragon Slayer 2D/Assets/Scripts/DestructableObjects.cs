@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class DestructableObjects : MonoBehaviour
 {
-
-
-    public GameObject objectShatterer;
-
-   
     private void OnTriggerStay2D(Collider2D collision)
     {
         
@@ -19,9 +14,15 @@ public class DestructableObjects : MonoBehaviour
 
             if (isAttacking)
             {
+                int chance = Random.Range(0, 100);
+
                 //If the player is attacking, the method SpawnBrokenObject and SpawnRandomPickup will be called from the GameManager script - Anthony
-                GameManager.instance.SpawnBrokenObject(transform, objectShatterer);
-                GameManager.instance.SpawnRandomPickup(gameObject.transform);
+                GameManager.instance.SpawnBrokenObject(transform, gameObject.tag);
+                //20% chance to spawn a random pickup
+                if (chance <= 20)
+                {
+                    GameManager.instance.SpawnRandomPickup(gameObject.transform);
+                }
                 //Gets rid of the game object that's colliding with "Player" - Anthony
                 Destroy(gameObject);
             }

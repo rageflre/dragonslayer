@@ -18,6 +18,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
     private int pointerSpeed;
     private bool correctAnswerGiven = false;
     private bool isInteractable = true;
+    float buttonSwitchDelay;
 
     RekenOPsBackEnd BackEnd;
     InputManager InputScript;
@@ -51,6 +52,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
                 else if (selectedButton == 1) { selectedButton = 0; }
                 else if (selectedButton == 2) { selectedButton = 1; }
                 else if (selectedButton == 3) { selectedButton = 2; }
+                buttonSwitchDelay = Time.time + 0.25f;
             }
             else if (InputScript.verticalMovement == -1)
             {
@@ -58,6 +60,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
                 else if (selectedButton == 1) { selectedButton = 2; }
                 else if (selectedButton == 2) { selectedButton = 3; }
                 else if (selectedButton == 3) { selectedButton = 0; pointerSpeed = 40; }
+                buttonSwitchDelay = Time.time + 0.25f;
             }
         }
         //Pointer verplaatst zich naar de pointer target position van de geselecteerd button
