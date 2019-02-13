@@ -5,6 +5,7 @@ using UnityEngine;
 public class AxeMovement : MonoBehaviour
 {
 
+    public int attackDamage;
     float speed = 4, rotateTimer;
     Rigidbody2D rb;
     Quaternion originalRotation;
@@ -43,7 +44,8 @@ public class AxeMovement : MonoBehaviour
         if (collision.gameObject.tag.Equals("Enemy"))
         {
             DestroySword();
-            Destroy(collision.gameObject);
+            EnemyController controller = collision.GetComponent<EnemyController>();
+            controller.DecreaseHealth(attackDamage, collision.gameObject);
         }
         else if(collision.gameObject.tag.Equals("Candle"))
         {

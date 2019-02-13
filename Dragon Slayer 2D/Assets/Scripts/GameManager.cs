@@ -73,6 +73,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (instance == null)
+            instance = this;
+
         scoreText.text = "Score: " + currentScore;
         timeText.text = "Time: " + Mathf.Round(currentTime);
 

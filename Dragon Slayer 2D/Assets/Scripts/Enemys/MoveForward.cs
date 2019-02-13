@@ -8,12 +8,14 @@ public class MoveForward : MonoBehaviour
     float turnDelay;
     Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
+    EnemyController enemyController;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        enemyController = GetComponent<EnemyController>();
     }
 
     // Update is called once per frame
@@ -24,24 +26,22 @@ public class MoveForward : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.name.Equals("Player"))
+        if (collision.name.Equals("Sword collider"))
         {
-            bool isAttacking = collision.gameObject.GetComponent<PlayerControl>().isAttacking;
-
-            if (isAttacking)
+            PlayerControl control = collision.transform.parent.GetComponent<PlayerControl>();
+            bool isAttacking = control.isAttacking;
+            int attackDamage = control.attackDamage;
+            if (isAttacking && Time.time > enemyController.invincibleTime)
             {
                 GameManager.instance.IncreaseScore(1);
-                Destroy(gameObject);
+                enemyController.DecreaseHealth(attackDamage, gameObject);
+                control.isAttacking = false;
             }
-            else
-            {
-                if (Time.time > GameManager.instance.invincibleTime)
-                {
-                    GameManager.instance.DecreaseHealth();
-                }
-            }
-
             return;
+        }
+        else if (collision.name.Equals("Player") && Time.time > GameManager.instance.invincibleTime)
+        {
+            GameManager.instance.DecreaseHealth();
         }
     }
 

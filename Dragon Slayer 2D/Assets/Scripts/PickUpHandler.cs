@@ -14,7 +14,7 @@ public class PickUpHandler : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.name.Equals("Foreground"))
+        if (collision.name.Equals("Foreground") || collision.name.Equals("Ladder top"))
         {
             rb.gravityScale = 0;
 

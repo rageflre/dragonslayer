@@ -11,6 +11,7 @@ TagManager:
   - Throwing sword
   - Enemy
   - Candle
+  - Sword collider
   layers:
   - Default
   - TransparentFX

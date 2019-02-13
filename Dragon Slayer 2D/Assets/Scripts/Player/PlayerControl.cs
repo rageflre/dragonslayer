@@ -8,6 +8,7 @@ public class PlayerControl : MonoBehaviour
     Transform groundCheck;
     float speed = 2, jumpForce = 235, groundCheckRadius = 0.105f, dashSpeed = 100;
     public bool isAttacking = false;
+    public int attackDamage = 1;
     [SerializeField] bool debugGroundCheck = false;
 
     Rigidbody2D rb;
@@ -89,6 +90,7 @@ public class PlayerControl : MonoBehaviour
         {
             spriteRenderer.flipX = !spriteRenderer.flipX;
             FlipThrowPosition();
+            UpdateSwordCollider();
         }
     }
 
@@ -110,6 +112,7 @@ public class PlayerControl : MonoBehaviour
         if (inputManager.bButtonPressed && canAttack && !isClimbing && !isDashing)
         {
             isAttacking = true;
+            animator.SetBool("attacking", isAttacking);
             canAttack = false;
             attackReset = Time.time + 0.325f;
             attackTimer = Time.time + 0.65f;
@@ -118,12 +121,12 @@ public class PlayerControl : MonoBehaviour
         if(Time.time > attackReset)
         {
             isAttacking = false;
+            animator.SetBool("attacking", isAttacking);
         }
         if(Time.time > attackTimer)
         {
             canAttack = true;
         }
-        animator.SetBool("attacking", isAttacking);
     }
 
     void HandleThrowing()
@@ -251,6 +254,11 @@ public class PlayerControl : MonoBehaviour
         isDashing = false;
         dashCooldown = true;
         animator.SetBool("dashing", isDashing);
+    }
+
+    void UpdateSwordCollider()
+    {
+        transform.GetChild(2).localPosition = new Vector3(!spriteRenderer.flipX ? 0.1f : -0.097f, -0.127f, 0f);
     }
 
     void FlipThrowPosition()

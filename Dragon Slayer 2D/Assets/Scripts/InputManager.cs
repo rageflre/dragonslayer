@@ -104,7 +104,7 @@ public class InputManager : MonoBehaviour
             xButtonPressed = Input.GetKeyDown(KeyCode.R);
             quitButtonPressed = Input.GetKeyDown(KeyCode.Escape);
             rbButtonPressed = Input.GetKeyDown(KeyCode.LeftShift);
-            rbButtonHeld = Input.GetKeyDown(KeyCode.LeftShift);
+            rbButtonHeld = Input.GetKey(KeyCode.LeftShift);
         }
 
         if (quitButtonPressed)
