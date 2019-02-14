@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwordMovement : MonoBehaviour
+public class AxeMovement : MonoBehaviour
 {
 
+    public int attackDamage;
     float speed = 4, rotateTimer;
     Rigidbody2D rb;
     Quaternion originalRotation;
     public GameObject spawnedObject;
-
-    
 
     private void Awake()
     {
@@ -45,6 +44,13 @@ public class SwordMovement : MonoBehaviour
         if (collision.gameObject.tag.Equals("Enemy"))
         {
             DestroySword();
+            EnemyController controller = collision.GetComponent<EnemyController>();
+            controller.DecreaseHealth(attackDamage, collision.gameObject);
+        }
+        else if(collision.gameObject.tag.Equals("Candle"))
+        {
+            GameManager.instance.SpawnBrokenObject(gameObject.transform, collision.gameObject.tag);
+            GameManager.instance.SpawnRandomPickup(collision.gameObject.transform);
             Destroy(collision.gameObject);
         }
     }

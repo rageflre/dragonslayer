@@ -8,9 +8,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
     public GameObject throwableSword;
-    public GameObject playerObject;
+    public GameObject playerObject, brokenCandle;
     public Image[] healthSprites;
     public Text scoreText, timeText;
+    public GameObject[] pickUps;
 
     PlayerControl player;
     Color defaultColor;
@@ -72,6 +73,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (instance == null)
+            instance = this;
+
         scoreText.text = "Score: " + currentScore;
         timeText.text = "Time: " + Mathf.Round(currentTime);
 
@@ -81,7 +85,7 @@ public class GameManager : MonoBehaviour
             invincibleTime = 0;
         }
 
-        if(Time.time > hitTime && hitTime > 0)
+        if (Time.time > hitTime && hitTime > 0)
         {
             player.animator.SetBool("gothit", false);
             hitTime = 0;
@@ -135,4 +139,36 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
 
     }
+    public void SpawnRandomPickup(Transform _transform) 
+    {
+        //Calls a random pickup from the array - Anthony
+        Instantiate(pickUps[Random.Range(0, pickUps.Length)],_transform.position, _transform.rotation); 
+    }
+    public void SpawnBrokenObject(Transform _transform, string tag)
+    {
+        GameObject _gameObject = null;
+
+        switch(tag)
+        {
+            case "Candle":
+                _gameObject = brokenCandle;
+                break;
+        }
+
+        if (_gameObject == null) return;
+
+        //Keeps looping until the int i is no longer larger than 3 - Anthony
+        for (int i = 0; i < 3; i++)
+        {
+            _transform.TransformPoint(0, -100, 0);
+            GameObject clone = Instantiate(_gameObject, _transform.position, Quaternion.identity);
+
+            Rigidbody2D rb = clone.GetComponent<Rigidbody2D>();
+            //Adds movement force in the right and upward direction - Anthony
+            rb.AddForce(Vector3.right * Random.Range(-100, 50));
+            rb.AddForce(Vector3.up * Random.Range(50, 150));
+        }
+    }
 }
+
+

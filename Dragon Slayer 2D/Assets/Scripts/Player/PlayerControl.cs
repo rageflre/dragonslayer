@@ -9,6 +9,7 @@ public class PlayerControl : MonoBehaviour
     Transform groundCheck;
     float speed = 2, jumpForce = 235, groundCheckRadius = 0.105f, dashSpeed = 100;
     public bool isAttacking = false;
+    public int attackDamage = 1;
     [SerializeField] bool debugGroundCheck = false;
 
     Rigidbody2D rb;
@@ -77,6 +78,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    
     void HandleMovement()
     {
 
@@ -91,6 +93,7 @@ public class PlayerControl : MonoBehaviour
         {
             spriteRenderer.flipX = !spriteRenderer.flipX;
             FlipThrowPosition();
+            UpdateSwordCollider();
         }
     }
 
@@ -109,9 +112,10 @@ public class PlayerControl : MonoBehaviour
     void HandleAttacking()
     {
 
-        if (inputManager.bButtonPressed && canAttack && !isClimbing)
+        if (inputManager.bButtonPressed && canAttack && !isClimbing && !isDashing)
         {
             isAttacking = true;
+            animator.SetBool("attacking", isAttacking);
             canAttack = false;
             attackReset = Time.time + 0.325f;
             attackTimer = Time.time + 0.65f;
@@ -120,18 +124,16 @@ public class PlayerControl : MonoBehaviour
         if(Time.time > attackReset)
         {
             isAttacking = false;
+            animator.SetBool("attacking", isAttacking);
         }
         if(Time.time > attackTimer)
         {
             canAttack = true;
         }
-        animator.SetBool("attacking", isAttacking);
     }
 
     void HandleThrowing()
     {
-        if (GameManager.instance == null) return;
-
         bool hasThrowable = GameManager.instance.throwableObject != null;
 
         if (inputManager.xButtonPressed && hasThrowable && !isThrowing && !isClimbing)
@@ -139,12 +141,14 @@ public class PlayerControl : MonoBehaviour
             Instantiate(GameManager.instance.throwableObject, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
             GameManager.instance.throwableObject = null;
             isThrowing = true;
-            throwTimer = Time.time + 0.5f;
+            throwTimer = Time.time + 0.3f;
+            animator.SetBool("throwing", isThrowing);
         }
 
         if (Time.time > throwTimer)
         {
             isThrowing = false;
+            animator.SetBool("throwing", isThrowing);
         }
     }
 
@@ -208,15 +212,24 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    float dashTimer, maxDash = 0.5f, dashCooldownTimer = 1f;
+    float dashTimer, maxDash = 0.5f, dashCooldownTimer = 2f;
     bool dashCooldown;
 
     void HandleDash()
     {
         if (inputManager.rbButtonHeld && !isDashing && !dashCooldown && !isClimbing)
         {
+            if(isAttacking)
+            {
+                isAttacking = false;
+                animator.SetBool("attacking", isAttacking);
+            }
             isDashing = true;
-            animator.SetBool("dashing", true);
+            animator.SetBool("dashing", isDashing);
+        }
+        if(isDashing && !inputManager.rbButtonHeld && dashTimer >= 0.2f)
+        {
+            SetDashingCooldown();
         }
         if(isDashing)
         {
@@ -224,10 +237,7 @@ public class PlayerControl : MonoBehaviour
             dashTimer += Time.deltaTime;
             if(dashTimer >= maxDash)
             {
-                dashTimer = dashCooldownTimer;
-                isDashing = false;
-                dashCooldown = true;
-                animator.SetBool("dashing", false);
+                SetDashingCooldown();
             }
         }
         if(dashCooldown)
@@ -239,6 +249,19 @@ public class PlayerControl : MonoBehaviour
                 dashCooldown = false;
             }
         }
+    }
+
+    void SetDashingCooldown()
+    {
+        dashTimer = dashCooldownTimer;
+        isDashing = false;
+        dashCooldown = true;
+        animator.SetBool("dashing", isDashing);
+    }
+
+    void UpdateSwordCollider()
+    {
+        transform.GetChild(2).localPosition = new Vector3(!spriteRenderer.flipX ? 0.1f : -0.097f, -0.127f, 0f);
     }
 
     void FlipThrowPosition()
