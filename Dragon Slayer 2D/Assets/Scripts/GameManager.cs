@@ -169,6 +169,12 @@ public class GameManager : MonoBehaviour
             rb.AddForce(Vector3.up * Random.Range(50, 150));
         }
     }
+
+    public void ResetPosition()
+    {
+        Transform _t = player.GetComponent<Transform>();
+        _t.position = new Vector3(player.oldPosition.x, player.oldPosition.y);
+    }
 }
 
 

@@ -9,7 +9,8 @@ public class Spikes : MonoBehaviour
     {
         if(collision.gameObject.name.Equals("Player"))
         {
-            GameManager.instance.HandleDeath();
+            //GameManager.instance.HandleDeath();
+            GameManager.instance.ResetPosition();
         }
     }
 

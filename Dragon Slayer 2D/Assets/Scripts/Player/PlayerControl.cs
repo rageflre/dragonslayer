@@ -21,6 +21,7 @@ public class PlayerControl : MonoBehaviour
     bool isGrounded, isThrowing, isClimbing, isDashing, canAttack;
     PlatformEffector2D onPlatform;
     float rotationTime;
+    public Vector3 oldPosition;
 
     private void Awake()
     {
@@ -50,17 +51,6 @@ public class PlayerControl : MonoBehaviour
 
         HandleDash();
 
-    }
-
-
-
-    private void OnDrawGizmos()
-    {
-        if (debugGroundCheck)
-        {
-            Gizmos.color = new Color(1, 0, 0, 0.5f);
-            Gizmos.DrawCube(groundCheck.position, new Vector3(0.36f, 0.105f));
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -97,10 +87,21 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    Vector3 lastGroundCheck;
     void HandleJumping()
     {
+        lastGroundCheck = groundCheck.position;
         isGrounded = Physics2D.OverlapBox(groundCheck.position, new Vector2(0.36f, 0.105f), groundCheckRadius, 1 << LayerMask.NameToLayer("Solid"));
         
+        if(!isGrounded && oldPosition.Equals(Vector3.zero))
+        {
+            print("ffff");
+            oldPosition = lastGroundCheck;
+        } else if(isGrounded && !oldPosition.Equals(Vector3.zero))
+        {
+            oldPosition = Vector3.zero;
+        }
+
         if (inputManager.aButtonPressed && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce);

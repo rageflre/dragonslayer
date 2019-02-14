@@ -9,11 +9,14 @@ EditorBuildSettings:
     path: Assets/Scenes/TItle Screen.unity
     guid: 5072538ccc5a7c94aac78f2f0df9cc94
   - enabled: 1
-    path: Assets/Scenes/Enemy test.unity
-    guid: 9293093fd0860a041a63e109c8302d4f
+    path: Assets/Scenes/SampleScene clone.unity
+    guid: 5fbea550d6b51c64c8b6b61e6f7fe59d
   - enabled: 1
     path: Assets/Scenes/Reken-OPs.unity
     guid: 72f4bf251f060d7438e781241e174ed2
+  - enabled: 1
+    path: Assets/Scenes/Enemy test.unity
+    guid: 9293093fd0860a041a63e109c8302d4f
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 2f702ed7703878e479313e3e22ea9454

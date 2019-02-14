@@ -46,7 +46,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
                 Debug.Log("dit is de result " + BackEnd.result);
                 if (BackEnd.FieldText[selectedButton] == BackEnd.result) { CorrectAnswer(); Debug.Log("Correct"); correctAnswerGiven = true; isInteractable = false; } else { WrongAnswer(); isInteractable = false; }
             }
-            if (InputScript.verticalMovement == 1)
+            if (InputScript.verticalMovement == 1 && Time.time >= buttonSwitchDelay)
             {
                 if (selectedButton == 0) { selectedButton = 3; pointerSpeed = 40; }
                 else if (selectedButton == 1) { selectedButton = 0; }
@@ -54,7 +54,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
                 else if (selectedButton == 3) { selectedButton = 2; }
                 buttonSwitchDelay = Time.time + 0.25f;
             }
-            else if (InputScript.verticalMovement == -1)
+            else if (InputScript.verticalMovement == -1 && Time.time >= buttonSwitchDelay)
             {
                 if (selectedButton == 0) { selectedButton = 1; }
                 else if (selectedButton == 1) { selectedButton = 2; }
