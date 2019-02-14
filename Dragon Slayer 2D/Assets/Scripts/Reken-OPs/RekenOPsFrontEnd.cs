@@ -109,6 +109,7 @@ public class RekenOPsFrontEnd : MonoBehaviour
         yield return new WaitForSeconds(3);
         if (correctAnswerGiven)
         {
+            BackEnd.equationText.gameObject.SetActive(false);
             StartCoroutine(FadeToBlack());
             pointerSprite.SetActive(false);
         }
